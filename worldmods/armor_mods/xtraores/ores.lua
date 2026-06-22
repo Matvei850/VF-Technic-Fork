@@ -442,3 +442,65 @@ minetest.register_craft({
 	output = "xtraores:chromium_bar",
 	recipe = "xtraores:chromium_ore",
 })
+
+---------------------chromium---------------------
+
+minetest.register_node("xtraores:chromium_ore", {
+		description = "" ..core.colorize("#68fff6", "chromium ore\n")..core.colorize("#FFFFFF", "Can be placed\n")..core.colorize("#FFFFFF", "Material\n")..core.colorize("#FFFFFF", "Xtraores ore level: 12"),
+	tiles = {"default_stone.png^xtraores_chromium_ore.png"},
+	inventory_image = "xtraores_chromium_lump.png",
+	stack_max= 999,
+	groups = {cracky = 12},
+	on_blast = function() end,
+	sounds = default.node_sound_stone_defaults(),
+})
+
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "xtraores:chromium_ore",
+		wherein        = "default:stone",
+		clust_scarcity = 38 * 38 * 38,
+		clust_num_ores = 3,
+		clust_size     = 3,
+		y_min          = -31000,
+		y_max          = -18000,
+	})
+
+minetest.register_craft({
+	type = "cooking",
+	cooktime = 180,
+	output = "xtraores:chromium_bar",
+	recipe = "xtraores:chromium_ore",
+})
+
+---------------------adamantium---------------------
+
+minetest.register_node("xtraores:adamantium_ore", {
+		description = "" ..core.colorize("#68fff6", "adamantium ore\n")..core.colorize("#FFFFFF", "Can be placed\n")..core.colorize("#FFFFFF", "Material\n")..core.colorize("#FFFFFF", "Xtraores ore level: 13"),
+	tiles = {"default_stone.png^xtraores_adamantium_ore.png"},
+	inventory_image = "xtraores_adamantium_lump.png",
+	stack_max= 999,
+	groups = {cracky = 13},
+	on_blast = function() end,
+	sounds = default.node_sound_stone_defaults(),
+})
+
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "xtraores:adamantium_ore",
+		wherein        = "default:stone",
+		clust_scarcity = 38 * 38 * 38,
+		clust_num_ores = 2,
+		clust_size     = 2,
+		y_min          = -31000,
+		y_max          = -20000,
+	})
+
+minetest.register_craft({
+	type = "cooking",
+	cooktime = 200,
+	output = "xtraores:adamantium_bar",
+	recipe = "xtraores:adamantium_ore",
+})
+
+adamantium
