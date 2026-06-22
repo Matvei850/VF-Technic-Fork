@@ -872,3 +872,68 @@ minetest.register_craft({
 
 	}
 })
+
+-----adamantium--------
+
+minetest.register_node("xtraores:brick_adamantium", {
+		description = "" ..core.colorize("#68fff6", "adamantium brick\n")..core.colorize("#FFFFFF", "Can be placed\n")..core.colorize("#FFFFFF", "Material"),
+	tiles = {"xtraores_brick_adamantium.png"},
+	paramtype2 = "facedir",
+	place_param2 = 0,
+	is_ground_content = false,
+	stack_max= 999,
+	groups = {cracky = 12},
+	on_blast = function() end,
+	sounds = default.node_sound_stone_defaults(),
+})
+
+minetest.register_craft( {
+	type = "shapeless",
+	output = "xtraores:brick_adamantium",
+	recipe = {"xtraores:adamantium_ore", "default:cobble"},
+})
+
+minetest.register_node("xtraores:block_adamantium", {
+		description = "" ..core.colorize("#68fff6", "adamantium block\n")..core.colorize("#FFFFFF", "Can be placed\n")..core.colorize("#FFFFFF", "Material"),
+	tiles = {"xtraores_block_adamantium.png"},
+	paramtype2 = "facedir",
+	place_param2 = 0,
+	is_ground_content = false,
+	stack_max= 999,
+	groups = {cracky = 12},
+	on_blast = function() end,
+	sounds = default.node_sound_stone_defaults(),
+})
+minetest.register_craft({
+	output = 'xtraores:block_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+	}
+})
+
+minetest.register_craft({
+	output = 'xtraores:adamantium_bar 9',
+	recipe = {
+		{'xtraores:block_adamantium'},
+	}
+})
+minetest.register_node("xtraores:decobrick_adamantium", {
+		description = "" ..core.colorize("#68fff6", "Decorative adamantium brick\n")..core.colorize("#FFFFFF", "Can be placed"),
+	tiles = {"xtraores_decobrick_adamantium.png"},
+	is_ground_content = false,
+	stack_max= 999,
+	groups = {cracky = 12},
+	on_blast = function() end,
+	sounds = default.node_sound_stone_defaults(),
+})
+
+minetest.register_craft({
+	output = 'xtraores:decobrick_adamantium 4',
+	recipe = {
+		{'xtraores:brick_adamantium', 'xtraores:brick_adamantium', ''},
+		{'xtraores:brick_adamantium', 'xtraores:brick_adamantium', ''},
+
+	}
+})
