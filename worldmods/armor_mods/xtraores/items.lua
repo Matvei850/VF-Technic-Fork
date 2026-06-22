@@ -80,6 +80,12 @@ minetest.register_craftitem('xtraores:chromium_bar', {
 	stack_max= 999,
 })
 
+minetest.register_craftitem('xtraores:adamantium_bar', {
+		description = "".. core.colorize("#68fff6", "adamantium bar\n")..core.colorize("#FFFFFF", "Material\n")..core.colorize("#FFFFFF", "Xtraores material level: 13"),
+	inventory_image = "xtraores_adamantium_bar.png",
+	stack_max= 999,
+})
+
 --------------------handles-------------
 
 minetest.register_craftitem('xtraores:steel_handle', {
