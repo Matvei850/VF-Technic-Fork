@@ -1531,3 +1531,132 @@ minetest.register_craft({
 	}
 })
 
+
+-------------------adamantium set-------------------
+
+minetest.register_tool("xtraores:pickaxe_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium pickaxe\n")..core.colorize("#FFFFFF", "Mele damage: 25\n")..core.colorize("#FFFFFF", "Full punch interval: 0.60\n")..core.colorize("#FFFFFF", "range: 7.0\n")..core.colorize("#FFFFFF", "Xtraores tool level: 13"),
+	inventory_image = "xtraores_pickaxe_adamantium.png",
+	range = 7.0,
+	tool_capabilities = {
+		full_punch_interval = 0.60,
+		max_drop_level=1,
+		groupcaps={
+			cracky = {times={[13]=32.00,[12]=20.00, [11]=15.00, [10]=7.50, [9]=6.00, [8]=4.50, [7]=3.00, [6]=2.00, [5]=1.75, [4]=0.60, [1]=0.20, [2]=0.12, [3]=0.05}, uses=450, maxlevel=3},
+			crumbly = {times={[1]=0.022, [2]=0.008, [3]=0.008}, uses=450, maxlevel=3},
+		},
+		damage_groups = {fleshy=25},
+	},
+	sound = {breaks = "default_tool_breaks"},
+})
+
+minetest.register_craft({
+	output = 'xtraores:pickaxe_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:duraglass_handle', ''},
+		{'', 'xtraores:duraglass_handle', ''},
+	}
+})
+
+minetest.register_tool("xtraores:axe_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium axe\n")..core.colorize("#FFFFFF", "Mele damage: 25\n")..core.colorize("#FFFFFF", "Full punch interval: 0.60\n")..core.colorize("#FFFFFF", "range: 7.0\n")..core.colorize("#FFFFFF", "Xtraores tool level: 13"),
+	inventory_image = "xtraores_axe_adamantium.png",
+	range = 7.0,
+	tool_capabilities = {
+		full_punch_interval = 0.60,
+		max_drop_level=1,
+		groupcaps={
+			choppy={times={[1]=0.30, [2]=0.1, [3]=0.030}, uses=450, maxlevel=3},
+		},
+		damage_groups = {fleshy=25},
+	},
+	sound = {breaks = "default_tool_breaks"},
+})
+minetest.register_craft({
+	output = 'xtraores:axe_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', ''},
+		{'xtraores:adamantium_bar', 'xtraores:duraglass_handle', ''},
+		{'', 'xtraores:duraglass_handle', ''},
+	}
+})
+minetest.register_craft({
+	output = 'xtraores:axe_adamantium',
+	recipe = {
+		{'', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:duraglass_handle', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:duraglass_handle', ''},
+	}
+})
+
+minetest.register_tool("xtraores:sword_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium sword\n")..core.colorize("#FFFFFF", "Mele damage: 30\n")..core.colorize("#FFFFFF", "Full punch interval: 0.38\n")..core.colorize("#FFFFFF", "range: 7.0\n")..core.colorize("#FFFFFF", "Xtraores tool level: 13"),
+	inventory_image = "xtraores_sword_adamantium.png",
+	range = 7.0,
+	tool_capabilities = {
+		full_punch_interval = 0.38,
+		max_drop_level=1,
+		groupcaps={
+			snappy={times={[1]=0.20, [2]=0.09, [3]=0.004}, uses=450, maxlevel=3},
+		},
+		damage_groups = {fleshy=30},
+	},
+	sound = {breaks = "default_tool_breaks"},
+})
+minetest.register_craft({
+	output = 'xtraores:sword_adamantium',
+	recipe = {
+		{'', 'xtraores:adamantium_bar', ''},
+		{'', 'xtraores:adamantium_bar', ''},
+		{'', 'xtraores:duraglass_handle', ''},
+	}
+})
+
+minetest.register_tool("xtraores:spear_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium spear\n")..core.colorize("#FFFFFF", "Mele damage: 35\n")..core.colorize("#FFFFFF", "Full punch interval: 0.60\n")..core.colorize("#FFFFFF", "range: 8.5\n")..core.colorize("#FFFFFF", "Xtraores tool level: 13"),
+	inventory_image = "xtraores_spear_adamantium.png",
+	wield_scale = {x=2.0,y=2.0,z=1.0},
+	range = 8.5,
+	tool_capabilities = {
+		full_punch_interval = 0.60,
+		max_drop_level=1,
+		groupcaps={
+			snappy={times={[1]=0.22, [2]=0.03, [3]=0.0001}, uses=450, maxlevel=3},
+		},
+		damage_groups = {fleshy=29},
+	},
+	sound = {breaks = "default_tool_breaks"},
+})
+
+minetest.register_craft({
+	output = 'xtraores:spear_adamantium',
+	recipe = {
+		{'', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:duraglass_handle', 'xtraores:adamantium_bar'},
+		{'xtraores:duraglass_handle', '', ''},
+	}
+})
+
+minetest.register_tool("xtraores:shortsword_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium shortsword\n")..core.colorize("#FFFFFF", "Mele damage: 26\n")..core.colorize("#FFFFFF", "Full punch interval: 0.31\n")..core.colorize("#FFFFFF", "range: 5.0\n")..core.colorize("#FFFFFF", "Xtraores tool level: 13"),
+	inventory_image = "xtraores_shortsword_adamantium.png",
+	range = 5.0,
+	tool_capabilities = {
+		full_punch_interval = 0.31,
+		max_drop_level=1,
+		groupcaps={
+			snappy={times={[1]=0.30, [2]=0.10, [3]=0.004}, uses=450, maxlevel=3},
+		},
+		damage_groups = {fleshy=23},
+	},
+	sound = {breaks = "default_tool_breaks"},
+})
+minetest.register_craft({
+	output = 'xtraores:shortsword_adamantium',
+	recipe = {
+		{'', '', ''},
+		{'', '', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:duraglass_handle', ''},
+	}
+})
