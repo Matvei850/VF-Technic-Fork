@@ -502,5 +502,3 @@ minetest.register_craft({
 	output = "xtraores:adamantium_bar",
 	recipe = "xtraores:adamantium_ore",
 })
-
-adamantium
