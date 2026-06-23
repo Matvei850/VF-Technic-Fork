@@ -1118,8 +1118,97 @@ minetest.register_craft({
 	}
 })
 
+----------------adamantium set----------------------
+
+	armor:register_armor("xtraores:helmet_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium heavy-helm\n")..core.colorize("#FFFFFF", "Protection: 16.7%\n")..core.colorize("#FFFFFF", "Heal chance: 13%\n") ..core.colorize("#FFFFFF", "Speed bonus: 36%\n")..core.colorize("#FFFFFF", "Jump bonus: 17%\n")..core.colorize("#FFFFFF", "Gravity bonus: -6.0%\n")..core.colorize("#FFFFFF", "Xtraores armor level: 13"),
+		inventory_image = "xtraores_inv_helmet_adamantium.png",
+		groups = {armor_head=1, armor_heal=13, armor_use=13,
+			physics_speed=0.36, physics_jump=0.17, physics_gravity=-0.06},
+		armor_groups = {fleshy=16.7},
+		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
+	})
+
+minetest.register_craft({
+	output = 'xtraores:helmet_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+		{'', '', ''},
+	}
+})
+
+	armor:register_armor("xtraores:chestplate_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium heavy-platemail\n")..core.colorize("#FFFFFF", "Protection: 21.7%\n")..core.colorize("#FFFFFF", "Heal chance: 13%\n") ..core.colorize("#FFFFFF", "Speed bonus: 36%\n")..core.colorize("#FFFFFF", "Jump bonus: 17%\n")..core.colorize("#FFFFFF", "Gravity bonus: -6.0%\n")..core.colorize("#FFFFFF", "Xtraores armor level: 13"),
+		inventory_image = "xtraores_inv_chestplate_adamantium.png",
+		groups = {armor_torso=1, armor_heal=13, armor_use=13,
+			physics_speed=0.36, physics_jump=0.17, physics_gravity=-0.06},
+		armor_groups = {fleshy=21.7},
+		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
+	})
+
+minetest.register_craft({
+	output = 'xtraores:chestplate_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+	}
+})
+
+	armor:register_armor("xtraores:leggings_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium heavy-leggings\n")..core.colorize("#FFFFFF", "Protection: 21.7%\n")..core.colorize("#FFFFFF", "Heal chance: 13%\n") ..core.colorize("#FFFFFF", "Speed bonus: 36%\n")..core.colorize("#FFFFFF", "Jump bonus: 17%\n")..core.colorize("#FFFFFF", "Gravity bonus: -6.0%\n")..core.colorize("#FFFFFF", "Xtraores armor level: 13"),
+		inventory_image = "xtraores_inv_leggings_adamantium.png",
+		groups = {armor_legs=1, armor_heal=13, armor_use=13,
+			physics_speed=0.36, physics_jump=0.17, physics_gravity=-0.06},
+		armor_groups = {fleshy=21.7},
+		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
+	})
+
+minetest.register_craft({
+	output = 'xtraores:leggings_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+	}
+})
+
+	armor:register_armor("xtraores:boots_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium heavy-boots\n")..core.colorize("#FFFFFF", "Protection: 16.7%\n")..core.colorize("#FFFFFF", "Heal chance: 13%\n") ..core.colorize("#FFFFFF", "Speed bonus: 36%\n")..core.colorize("#FFFFFF", "Jump bonus: 17%\n")..core.colorize("#FFFFFF", "Gravity bonus: -6.0%\n")..core.colorize("#FFFFFF", "Xtraores armor level: 13"),
+		inventory_image = "xtraores_inv_boots_adamantium.png",
+		groups = {armor_feet=1, armor_heal=13, armor_use=13,
+			physics_speed=0.36, physics_jump=0.17, physics_gravity=-0.06},
+		armor_groups = {fleshy=16.7},
+		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
+	})
+
+minetest.register_craft({
+	output = 'xtraores:boots_adamantium',
+	recipe = {
+		{'', '', ''},
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', '', 'xtraores:adamantium_bar'},
+	}
+})
+
+	armor:register_armor("xtraores:shield_adamantium", {
+		description = "".. core.colorize("#68fff6", "adamantium heavy-shield\n")..core.colorize("#FFFFFF", "Protection: 16.7%\n")..core.colorize("#FFFFFF", "Heal chance: 13%\n") ..core.colorize("#FFFFFF", "Speed bonus: 36%\n")..core.colorize("#FFFFFF", "Jump bonus: 17%\n")..core.colorize("#FFFFFF", "Gravity bonus: -6.0%\n")..core.colorize("#FFFFFF", "Xtraores armor level: 13"),
+		inventory_image = "xtraores_inv_shield_adamantium.png",
+		groups = {armor_shield=1, armor_heal=13, armor_use=13,
+			physics_speed=0.36, physics_jump=0.17, physics_gravity=-0.06},
+		armor_groups = {fleshy=16.7},
+		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
+	})
+
+
+minetest.register_craft({
+	output = 'xtraores:shield_adamantium',
+	recipe = {
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'xtraores:adamantium_bar', 'xtraores:adamantium_bar', 'xtraores:adamantium_bar'},
+		{'', 'xtraores:adamantium_bar', ''},
+	}
+})
+
 end
-
-
-
-
