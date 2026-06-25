@@ -882,7 +882,7 @@ minetest.register_node("xtraores:brick_adamantium", {
 	place_param2 = 0,
 	is_ground_content = false,
 	stack_max= 999,
-	groups = {cracky = 12},
+	groups = {cracky = 13},
 	on_blast = function() end,
 	sounds = default.node_sound_stone_defaults(),
 })
@@ -900,7 +900,7 @@ minetest.register_node("xtraores:block_adamantium", {
 	place_param2 = 0,
 	is_ground_content = false,
 	stack_max= 999,
-	groups = {cracky = 12},
+	groups = {cracky = 13},
 	on_blast = function() end,
 	sounds = default.node_sound_stone_defaults(),
 })
@@ -924,7 +924,7 @@ minetest.register_node("xtraores:decobrick_adamantium", {
 	tiles = {"xtraores_decobrick_adamantium.png"},
 	is_ground_content = false,
 	stack_max= 999,
-	groups = {cracky = 12},
+	groups = {cracky = 13},
 	on_blast = function() end,
 	sounds = default.node_sound_stone_defaults(),
 })
