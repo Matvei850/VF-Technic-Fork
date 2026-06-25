@@ -27,7 +27,7 @@ Faction doesn't exists=
 Find areas using a Lua regular expression=
 Get information about area configuration and usage.=
 
-Give a player access to a sub-area beetween two positions that have already been protected, Use set_owner if you don't want the parent to be set.=
+Give a player access to a sub-area between two positions that have already been protected, Use set_owner if you don't want the parent to be set.=
 
 Invalid regular expression.=
 Limit: @1 areas=
@@ -45,7 +45,7 @@ Protect your own area=
 Recursively remove areas using an ID=
 Remove an area using an ID=
 Removed area @1=
-Removed area @1 and it's sub areas.=
+Removed area @1 and its sub areas.=
 Removes all ownerless areas=
 Rename an area that you own=
 Self protection is disabled.=
@@ -121,7 +121,7 @@ unnamed=
 Area @1 selected.=
 Area position @1 set to @2=
 Position @1 set to @2=
-Position @1: =
+Position @1:=
 Select an area by ID.=
 Select position @1 by punching a node.=
 Select positions by punching two nodes.=
@@ -133,3 +133,5 @@ Set area protection region, position 1, or position 2 by punching nodes, or disp
 The area @1 does not exist.=
 Unable to get position.=
 Unknown subcommand: @1=
+
+Relative coordinates is not supported on this server. Please upgrade Minetest to 5.7.0 or newer versions.=

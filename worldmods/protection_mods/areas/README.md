@@ -1,11 +1,10 @@
-Areas mod for Minetest
-======================
+Areas mod
+=========
 
 Dependencies
 ------------
 
-Minetest 5.0.0+ is recommended, but 0.4.16+ should work as well.
-Minetest 5.0.0+
+Luant/Minetest >= 5.0.0
 
 Optional support for following mods:
 
@@ -15,7 +14,7 @@ Optional support for following mods:
 Configuration
 -------------
 
-Open the tab `Settings -> All Settings -> Mods -> areas` to get a list of all
+Open the `Settings` in the main menu. `Content: Mods -> areas` to get a list of all
 possible settings.
 
 For server owners: Check `settingtypes.txt` and modify your `minetest.conf`
@@ -87,7 +86,7 @@ Commands
 
   * `/remove_area <ID>` -- Removes an area that you own. Any sub-areas of that
 	area are made sub-areas of the removed area's parent, if it exists.
-	If the removed area has no parent it's sub-areas will have no parent.
+	If the removed area has no parent its sub-areas will have no parent.
 
   * `/recursive_remove_areas <ID>` -- Removes an area and all sub-areas of it.
 
@@ -101,10 +100,10 @@ Commands
   * `/area_pos {set,set1,set2,get}` -- Sets the area positions by punching
 	nodes or shows the current area positions.
 
-  * `/area_pos1 [X,Y,Z|X Y Z]` -- Sets area position one to your position or
+  * `/area_pos1 [X,Y,Z|X Y Z|X, Y, Z]` -- Sets area position one to your position or
 	the one supplied.
 
-  * `/area_pos2 [X,Y,Z|X Y Z]` -- Sets area position two to your position or
+  * `/area_pos2 [X,Y,Z|X Y Z|X, Y, Z]` -- Sets area position two to your position or
 	the one supplied.
 
   * `/areas_cleanup` -- Removes all ownerless areas.
