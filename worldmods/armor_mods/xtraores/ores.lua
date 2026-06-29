@@ -489,7 +489,7 @@ minetest.register_node("xtraores:adamantium_ore", {
 		ore_type       = "scatter",
 		ore            = "xtraores:adamantium_ore",
 		wherein        = "default:stone",
-		clust_scarcity = 38 * 38 * 38,
+		clust_scarcity = 40 * 40 * 40,
 		clust_num_ores = 2,
 		clust_size     = 2,
 		y_min          = -31000,
