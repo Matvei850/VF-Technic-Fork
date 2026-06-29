@@ -1,32 +1,163 @@
 --[[
-Minetest Mod Storage Drawers - A Mod adding storage drawers
+Luanti Mod Storage Drawers - A Mod adding storage drawers
 
 Copyright (C) 2017-2019 Linus Jahn <lnj@kaidan.im>
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SPDX-License-Identifier: MIT
 ]]
 
--- Load support for intllib.
-local MP = core.get_modpath(core.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = core.get_translator('drawers')
+
+-- Finicky drawer visual rendering (vs for "visual size")
+local small_vs = { x = 0.25, y = 0.25, z = 0.0001 }
+local large_vs = { x = 0.5,  y = 0.5,  z = 0.0001 }
+local small_sprite_vs = { x = 0.3, y = 0.3 }
+local large_sprite_vs = { x = 0.6, y = 0.6 }
+
+-- Required for `visual = "node"`
+local MIN_PROTOCOL_VERSION = 48 -- 5.12.0
+
+-- Compute yaw from facedir direction so all four orientations are correct.
+-- bdir is the vector the drawer face points toward (from core.facedir_to_dir).
+-- The entity must face *toward the viewer*, i.e. opposite to bdir.
+local function facedir_yaw(bdir)
+	return math.atan2(-bdir.x, -bdir.z)
+end
+
+-- Strip color bits from param2 before comparing facedir values.
+local function facedir(param2)
+	return param2 % 32
+end
+
+-- Nodes whose geometry can't be meaningfully represented as a flat sprite.
+-- Use visual = "node" so the engine renders the actual mesh.
+local COMPLEX_DRAWTYPES = {
+	nodebox = true,
+	mesh    = true,
+	fencelike = true,
+}
+local function use_node_visual(item_def)
+	if not item_def then return false end
+	if COMPLEX_DRAWTYPES[item_def.drawtype] then
+		local has_2d = (item_def.inventory_image and #item_def.inventory_image > 0)
+			or (item_def.wield_image and #item_def.wield_image > 0)
+		return not has_2d
+	end
+	-- Animated tiles with no explicit 2D image: render as node so the
+	-- engine handles the animation rather than us mangling the spritesheet.
+	if item_def.tiles then
+		for _, tile in ipairs(item_def.tiles) do
+			if type(tile) == "table" and tile.animation then
+				local has_2d = (item_def.inventory_image and #item_def.inventory_image > 0)
+					or (item_def.wield_image and #item_def.wield_image > 0)
+				return not has_2d
+			end
+		end
+	end
+	return false
+end
+
+local function spawn_entity(pos, dir, id, yaw, itemname)
+	drawers.last_visual_id = id
+	drawers.last_texture = drawers.get_inv_image(itemname)
+
+	pos = vector.add(pos, vector.multiply(dir, 0.45))
+	local obj = core.add_entity(pos, "drawers:visual")
+	if obj then
+		obj:set_yaw(yaw)
+	end
+end
+
+function drawers.spawn_visuals(pos)
+	local node = core.get_node(pos)
+	local meta = core.get_meta(pos)
+	local ndef = core.registered_nodes[node.name]
+	local drawerType = ndef.groups.drawer
+
+	-- data for the new visual
+	drawers.last_drawer_pos = pos
+	drawers.last_drawer_type = drawerType
+
+	if drawerType == 1 then -- 1x1 drawer
+		local bdir = core.facedir_to_dir(node.param2)
+		local yaw = facedir_yaw(bdir)
+
+		local fdir = vector.new(-bdir.x, 0, -bdir.z)
+		spawn_entity(pos, fdir, "", yaw, meta:get_string("name"))
+
+	elseif drawerType == 2 then -- 1x2 drawer
+		local bdir = core.facedir_to_dir(node.param2)
+		local yaw = facedir_yaw(bdir)
+
+		local fdir1 = vector.new(-bdir.x, 0.5, -bdir.z)
+		local fdir2 = vector.new(-bdir.x, -0.5, -bdir.z)
+		spawn_entity(pos, fdir1, 1, yaw, meta:get_string("name1"))
+		spawn_entity(pos, fdir2, 2, yaw, meta:get_string("name2"))
+
+	else -- 2x2 drawer
+		local bdir = core.facedir_to_dir(node.param2)
+		local yaw = facedir_yaw(bdir)
+
+		local fdir1, fdir2, fdir3, fdir4
+		if facedir(node.param2) == 2 then
+			fdir1 = vector.new(-bdir.x + 0.5, 0.5, -bdir.z)
+			fdir2 = vector.new(-bdir.x - 0.5, 0.5, -bdir.z)
+			fdir3 = vector.new(-bdir.x + 0.5, -0.5, -bdir.z)
+			fdir4 = vector.new(-bdir.x - 0.5, -0.5, -bdir.z)
+		elseif facedir(node.param2) == 0 then
+			fdir1 = vector.new(-bdir.x - 0.5, 0.5, -bdir.z)
+			fdir2 = vector.new(-bdir.x + 0.5, 0.5, -bdir.z)
+			fdir3 = vector.new(-bdir.x - 0.5, -0.5, -bdir.z)
+			fdir4 = vector.new(-bdir.x + 0.5, -0.5, -bdir.z)
+		elseif facedir(node.param2) == 1 then
+			fdir1 = vector.new(-bdir.x, 0.5, -bdir.z + 0.5)
+			fdir2 = vector.new(-bdir.x, 0.5, -bdir.z - 0.5)
+			fdir3 = vector.new(-bdir.x, -0.5, -bdir.z + 0.5)
+			fdir4 = vector.new(-bdir.x, -0.5, -bdir.z - 0.5)
+		else
+			fdir1 = vector.new(-bdir.x, 0.5, -bdir.z - 0.5)
+			fdir2 = vector.new(-bdir.x, 0.5, -bdir.z + 0.5)
+			fdir3 = vector.new(-bdir.x, -0.5, -bdir.z - 0.5)
+			fdir4 = vector.new(-bdir.x, -0.5, -bdir.z + 0.5)
+		end
+
+		spawn_entity(pos, fdir1, 1, yaw, meta:get_string("name1"))
+		spawn_entity(pos, fdir2, 2, yaw, meta:get_string("name2"))
+		spawn_entity(pos, fdir3, 3, yaw, meta:get_string("name3"))
+		spawn_entity(pos, fdir4, 4, yaw, meta:get_string("name4"))
+	end
+end
+
+function drawers.remove_visuals(pos)
+	local objs = core.get_objects_inside_radius(pos, 0.56)
+	if not objs then return end
+
+	for _, obj in pairs(objs) do
+		if obj and obj:get_luaentity() and
+			obj:get_luaentity().name == "drawers:visual" then
+			obj:remove()
+		end
+	end
+end
+
+--[[
+	Returns the visual object for the visualid of the drawer at pos.
+
+	visualid can be: "", "1", "2", ... or 1, 2, ...
+]]
+function drawers.get_visual(pos, visualid)
+	local drawer_visuals = drawers.drawer_visuals[core.hash_node_position(pos)]
+	if not drawer_visuals then
+		return nil
+	end
+
+	-- not a real index (starts with 1)
+	local index = tonumber(visualid)
+	if visualid == "" then
+		index = 1
+	end
+
+	return drawer_visuals[index]
+end
 
 core.register_entity("drawers:visual", {
 	initial_properties = {
@@ -49,7 +180,8 @@ core.register_entity("drawers:visual", {
 			drawer_posz = self.drawer_pos.z,
 			texture = self.texture,
 			drawerType = self.drawerType,
-			visualId = self.visualId
+			visualId = self.visualId,
+			yaw = self.object:get_yaw(), -- Persist yaw across chunk reloads
 		})
 	end,
 
@@ -66,6 +198,11 @@ core.register_entity("drawers:visual", {
 			self.drawerType = data.drawerType or 1
 			self.visualId = data.visualId or ""
 
+			-- Restore yaw saved at serialize time
+			if data.yaw then
+				self.object:set_yaw(data.yaw)
+			end
+
 			-- backwards compatibility
 			if self.texture == "drawers_empty.png" then
 				self.texture = "blank.png"
@@ -77,7 +214,7 @@ core.register_entity("drawers:visual", {
 			self.drawerType = drawers.last_drawer_type
 		end
 
-		local node = minetest.get_node(self.object:get_pos())
+		local node = core.get_node(self.object:get_pos())
 		if core.get_item_group(node.name, "drawer") == 0 then
 			self.object:remove()
 			return
@@ -100,10 +237,11 @@ core.register_entity("drawers:visual", {
 		self.meta = core.get_meta(self.drawer_pos)
 
 		-- collisionbox
+		-- Fix: use facedir() to strip color bits before comparing param2
 		node = core.get_node(self.drawer_pos)
 		local colbox
 		if self.drawerType ~= 2 then
-			if node.param2 == 1 or node.param2 == 3 then
+			if facedir(node.param2) == 1 or facedir(node.param2) == 3 then
 				colbox = {0, -0.4374, -0.4374,  0, 0.4374, 0.4374}
 			else
 				colbox = {-0.4374, -0.4374, 0,  0.4374, 0.4374, 0} -- for param2 = 0 or 2
@@ -115,19 +253,12 @@ core.register_entity("drawers:visual", {
 				end
 			end
 		else
-			if node.param2 == 1 or node.param2 == 3 then
+			if facedir(node.param2) == 1 or facedir(node.param2) == 3 then
 				colbox = {0, -0.2187, -0.4374,  0, 0.2187, 0.4374}
 			else
 				colbox = {-0.4374, -0.2187, 0,  0.4374, 0.2187, 0} -- for param2 = 0 or 2
 			end
 		end
-
-		-- visual size
-		local visual_size = {x = 0.6, y = 0.6}
-		if self.drawerType >= 2 then
-			visual_size = {x = 0.3, y = 0.3}
-		end
-
 
 		-- drawer values
 		local vid = self.visualId
@@ -137,16 +268,15 @@ core.register_entity("drawers:visual", {
 		self.itemStackMax = self.meta:get_int("base_stack_max"..vid)
 		self.stackMaxFactor = self.meta:get_int("stack_max_factor"..vid)
 
-
 		-- infotext
 		local infotext = self.meta:get_string("entity_infotext"..vid) .. "\n\n\n\n\n"
 
 		self.object:set_properties({
 			collisionbox = colbox,
 			infotext = infotext,
-			textures = {self.texture},
-			visual_size = visual_size
 		})
+
+		self:updateTexture()
 
 		-- make entity undestroyable
 		self.object:set_armor_groups({immortal = 1})
@@ -209,7 +339,7 @@ core.register_entity("drawers:visual", {
 	end,
 
 	on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir)
-		local node = minetest.get_node(self.object:get_pos())
+		local node = core.get_node(self.object:get_pos())
 
 		if core.get_item_group(node.name, "drawer") == 0 then
 			self.object:remove()
@@ -282,6 +412,11 @@ core.register_entity("drawers:visual", {
 			return 0
 		end
 
+		-- don't allow items with metadata
+		if #stack:get_meta():get_keys() > 0 then
+			return 0
+		end
+
 		-- don't allow unstackable stacks
 		if self.itemName == "" and stack:get_stack_max() ~= 1 then
 			return stack:get_count()
@@ -335,10 +470,7 @@ core.register_entity("drawers:visual", {
 	end,
 
 	updateInfotext = function(self)
-		local itemDescription = ""
-		if core.registered_items[self.itemName] then
-			itemDescription = core.registered_items[self.itemName].description
-		end
+		local itemDescription = ItemStack(self.itemName):get_short_description()
 
 		if self.count <= 0 then
 			self.itemName = ""
@@ -357,12 +489,26 @@ core.register_entity("drawers:visual", {
 	end,
 
 	updateTexture = function(self)
-		-- texture
-		self.texture = drawers.get_inv_image(self.itemName)
-
-		self.object:set_properties({
-			textures = {self.texture}
-		})
+		local item_def = core.registered_items[self.itemName]
+		if use_node_visual(item_def) then
+			local _visual_size = (self.drawerType >= 2)
+				and small_vs or large_vs
+			self.texture = self.itemName
+			self.object:set_properties({
+				visual = "node",
+				node = { name = self.itemName },
+				visual_size = _visual_size,
+			})
+		else
+			self.texture = drawers.get_inv_image(self.itemName)
+			local _visual_size = (self.drawerType >= 2)
+				and small_sprite_vs or large_sprite_vs
+			self.object:set_properties({
+				visual = "upright_sprite",
+				visual_size = _visual_size,
+				textures = {self.texture}
+			})
+		end
 	end,
 
 	dropStack = function(self, itemStack)
@@ -397,7 +543,6 @@ core.register_entity("drawers:visual", {
 			-- count
 			local stack = ItemStack(self.itemName)
 			stack:set_count(removeCount)
-			print(stack:to_string())
 			-- drop the stack
 			self:dropStack(stack)
 		end
@@ -417,7 +562,7 @@ core.register_entity("drawers:visual", {
 		core.sound_play("drawers_interact", {
 			pos = self.object:get_pos(),
 			max_hear_distance = 6,
-			gain = 2.0
+			gain = 0.8
 		})
 	end,
 
@@ -463,3 +608,13 @@ core.register_lbm({
 		drawers.spawn_visuals(pos)
 	end
 })
+
+-- Inform players about potential visual issues
+core.register_on_joinplayer(function(player)
+	local player_name = player:get_player_name()
+	local info = core.get_player_information(player_name)
+	if info and info.protocol_version < MIN_PROTOCOL_VERSION then
+		core.chat_send_player(player_name, S("drawers: Your Luanti/Minetest is"
+			.. " no longer supported. You might experience visual issues."))
+	end
+end)

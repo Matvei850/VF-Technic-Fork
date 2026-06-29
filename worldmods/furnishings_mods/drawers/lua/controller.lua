@@ -1,5 +1,5 @@
 --[[
-Minetest Mod Storage Drawers - A Mod adding storage drawers
+Luanti Mod Storage Drawers - A Mod adding storage drawers
 
 Copyright (C) 2017-2020 Linus Jahn <lnj@kaidan.im>
 Copyright (C) 2018 isaiah658
@@ -39,25 +39,21 @@ deposit an item in certain situations. The table is only updated on an as needed
 basis, not by a specific time/interval. Controllers that have no items will not
 continue scanning drawers. ]]--
 
--- Load support for intllib.
-local MP = core.get_modpath(core.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = core.get_translator('drawers')
 
 local default_loaded = core.get_modpath("default") and default
-local mcl_loaded = core.get_modpath("mcl_core") and mcl_core
 local pipeworks_loaded = core.get_modpath("pipeworks") and pipeworks
 local digilines_loaded = core.get_modpath("digilines") and digilines
+local techage_loaded = core.get_modpath("techage") and techage
 
 local function controller_formspec(pos)
 	local formspec =
-		"size[8,8.5]"..
+		"size[9,8.5]"..
 		drawers.gui_bg..
-		drawers.gui_bg_img..
 		drawers.gui_slots..
 		"label[0,0;" .. S("Drawer Controller") .. "]" ..
-		"list[current_name;src;3.5,1.75;1,1;]"..
-		"list[current_player;main;0,4.25;8,1;]"..
-		"list[current_player;main;0,5.5;8,3;8]"..
+		"list[current_name;src;4,1.75;1,1;]"..
+		drawers.inventory_list(4.25) ..
 		"listring[current_player;main]"..
 		"listring[current_name;src]"..
 		"listring[current_player;main]"
@@ -382,6 +378,10 @@ local function controller_on_digiline_receive(pos, _, channel, msg)
 		return
 	end
 
+	if msg and type(msg) ~= "string" and type(msg) ~= "table" then
+		return -- Protect against ItemStack(...) errors
+	end
+
 	local item = ItemStack(msg)
 	local drawers_index = controller_get_drawer_index(pos, item:get_name())
 
@@ -394,9 +394,20 @@ local function controller_on_digiline_receive(pos, _, channel, msg)
 		drawers_index[item:get_name()]["drawer_pos"], item)
 	local dir = core.facedir_to_dir(core.get_node(pos).param2)
 
-	-- prevent crash if taken_stack ended up with a nil value
+	-- prevent error if taken_stack ended up with a nil value
 	if taken_stack then
-		pipeworks.tube_inject_item(pos, pos, dir, taken_stack:to_string())
+		local tags = nil
+
+		-- Set item tags if provided in msg.tags or msg.tag
+		if pipeworks.enable_item_tags and type(msg) == "table" then
+			if type(msg.tags) == "table" or type(msg.tags) == "string" then
+				tags = pipeworks.sanitize_tags(msg.tags)
+			elseif type(msg.tag) == "string" then
+				tags = pipeworks.sanitize_tags({msg.tag})
+			end
+		end
+
+		pipeworks.tube_inject_item(pos, pos, dir, taken_stack, nil, tags)
 	end
 end
 
@@ -424,6 +435,7 @@ local function register_controller()
 	def.paramtype = "light"
 	def.paramtype2 = "facedir"
 	def.legacy_facedir_simple = true
+	def.is_ground_content = false
 
 	-- add pipe connectors, if pipeworks is enabled
 	if pipeworks_loaded then
@@ -447,7 +459,7 @@ local function register_controller()
 	end
 
 	-- MCL2 requires a few different groups and parameters that MTG does not
-	if mcl_loaded then
+	if drawers.mcl_loaded then
 		def.groups = {
 			pickaxey = 1, stone = 1, building_block = 1, material_stone = 1
 		}
@@ -479,7 +491,7 @@ local function register_controller()
 		end
 
 		def.tube.can_insert = function(pos, node, stack, tubedir)
-			return controller_allow_metadata_inventory_put(pos, "src", nil, stack, nil)
+			return controller_allow_metadata_inventory_put(pos, "src", nil, stack, nil) > 0
 		end
 
 		def.tube.connect_sides = {
@@ -500,6 +512,30 @@ local function register_controller()
 	end
 
 	core.register_node("drawers:controller", def)
+
+	if techage_loaded then
+		techage.register_node({"drawers:controller"}, {
+			on_push_item = function(pos, in_dir, stack)
+				return controller_insert_to_drawers(pos, stack)
+			end,
+			on_pull_item = function(pos, in_dir, num, item_name)
+				if not item_name then
+					return
+				end
+
+				local item = ItemStack(item_name)
+				local drawers_index = controller_get_drawer_index(pos, item:get_name())
+
+				if not drawers_index[item:get_name()] then
+					-- we can't do anything: the requested item doesn't exist
+					return
+				end
+
+				item:set_count(num)
+				return drawers.drawer_take_item(drawers_index[item:get_name()]["drawer_pos"], item)
+			end,
+		})
+	end
 end
 
 -- register drawer controller
@@ -514,7 +550,7 @@ if default_loaded then
 			{'default:steel_ingot', 'default:diamond', 'default:steel_ingot'},
 		}
 	})
-elseif mcl_loaded then
+elseif drawers.mcl_loaded then
 	core.register_craft({
 		output = 'drawers:controller',
 		recipe = {
